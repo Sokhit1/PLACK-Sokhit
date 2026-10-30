@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Lucide Icons Library -->
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
+<script src="https://unpkg.com/lucide@latest">
+
 // ================= CL01 ENHANCED LOGIC & LOCALSTORAGE STATE =================
 
 // Store QUIZ_15_DATA in window for runtime access
@@ -21,7 +21,8 @@ const CL01_STORAGE_KEYS = {
   QUIZ: 'itc_cl01_quiz_state',
   PROGRESS: 'itc_cl01_progress_state',
   VIDEO_COMPLETED: 'itc_cl01_video_watched',
-  VIDEO_URL: 'itc_cl01_video_url'
+  VIDEO_URL: 'itc_cl01_video_url',
+  GAMMA_URL: 'itc_cl01_gamma_url'
 };
 
 // Mobile Sidebar Drawer Toggle
@@ -71,26 +72,19 @@ function showPage(id, el) {
     setTimeout(initAirportMap, 150);
   }
 
-  // If CL01 slides opened, initialize slide renderer with retry
+  // If CL01 slides opened, initialize slide renderer & gamma
   if (id === 'cl01slides') {
-    const renderSlideWhenReady = (retries = 0) => {
-      if (typeof window.cl01GoToSlide === 'function') {
-        window.cl01GoToSlide(0);
-        if (typeof initLucide === 'function') initLucide();
-      } else if (retries < 30) {
-        setTimeout(() => renderSlideWhenReady(retries + 1), 80);
-      }
-    };
-    renderSlideWhenReady();
+    setTimeout(() => {
+      if (typeof initGammaSlideState === 'function') initGammaSlideState();
+      if (typeof window.cl01GoToSlide === 'function') window.cl01GoToSlide(0);
+      if (typeof initLucide === 'function') initLucide();
+    }, 50);
   }
 }
-
-window.showPage = showPage;
 
 function openPage(id) {
   showPage(id);
 }
-window.openPage = openPage;
 
 // Complete current and navigate to next step
 function completeAndOpen(current, next) {
@@ -264,6 +258,132 @@ function updateVideoStatusUI(watched) {
       btnText.textContent = 'Mark Video Watched';
     }
   }
+}
+
+// ================= CL01 GAMMA SLIDES CONTROLS =================
+const DEFAULT_CL01_GAMMA_URL = 'https://gamma.app/embed/hug9dm6s6f7e25k';
+
+function initGammaSlideState() {
+  try {
+    const savedUrl = localStorage.getItem(CL01_STORAGE_KEYS.GAMMA_URL) || DEFAULT_CL01_GAMMA_URL;
+    const frame = document.getElementById('cl01GammaFrame');
+    const input = document.getElementById('customGammaInput');
+    const label = document.getElementById('gammaCurrentUrlLabel');
+    if (frame && savedUrl) frame.src = savedUrl;
+    if (input && savedUrl) input.value = savedUrl;
+    if (label) {
+      label.textContent = savedUrl.includes('gamma.app') ? 'Source: Gamma App' : 'Source: Custom Presentation';
+    }
+  } catch(e) {}
+}
+
+function openGammaSettingsModal() {
+  const modal = document.getElementById('gammaModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeGammaSettingsModal() {
+  const modal = document.getElementById('gammaModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function saveCustomGammaUrl() {
+  const input = document.getElementById('customGammaInput');
+  if (!input || !input.value.trim()) return;
+  let url = input.value.trim();
+
+  // If user pasted a regular gamma.app/docs/xyz link, normalize to /embed/xyz
+  if (url.includes('gamma.app/docs/')) {
+    const docId = url.split('gamma.app/docs/')[1].split('?')[0].split('#')[0];
+    url = 'https://gamma.app/embed/' + docId;
+  } else if (!url.includes('gamma.app/embed/') && url.includes('gamma.app/')) {
+    const parts = url.replace(/https?:\/\/gamma\.app\//, '').split('?')[0].split('#')[0];
+    if (parts) {
+      url = 'https://gamma.app/embed/' + parts;
+    }
+  }
+
+  const frame = document.getElementById('cl01GammaFrame');
+  if (frame) frame.src = url;
+
+  try {
+    localStorage.setItem(CL01_STORAGE_KEYS.GAMMA_URL, url);
+  } catch(e) {}
+
+  const label = document.getElementById('gammaCurrentUrlLabel');
+  if (label) {
+    label.textContent = url.includes('gamma.app') ? 'Source: Gamma App' : 'Source: Custom Presentation';
+  }
+
+  closeGammaSettingsModal();
+  showToast('Gamma slide URL updated successfully!');
+}
+
+function resetDefaultGammaUrl() {
+  const input = document.getElementById('customGammaInput');
+  if (input) input.value = DEFAULT_CL01_GAMMA_URL;
+  const frame = document.getElementById('cl01GammaFrame');
+  if (frame) frame.src = DEFAULT_CL01_GAMMA_URL;
+  try {
+    localStorage.removeItem(CL01_STORAGE_KEYS.GAMMA_URL);
+  } catch(e) {}
+  const label = document.getElementById('gammaCurrentUrlLabel');
+  if (label) label.textContent = 'Source: Gamma App';
+  closeGammaSettingsModal();
+  showToast('Reset to default Gamma presentation.');
+}
+
+function openGammaFullscreen() {
+  const container = document.getElementById('cl01GammaContainer');
+  if (!container) return;
+  if (!document.fullscreenElement) {
+    if (container.requestFullscreen) {
+      container.requestFullscreen();
+    } else if (container.webkitRequestFullscreen) {
+      container.webkitRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) document.exitFullscreen();
+  }
+}
+
+function switchCL01SlideTab(tab) {
+  const gammaView = document.getElementById('cl01GammaSlideView');
+  const interactiveView = document.getElementById('cl01InteractiveDeckContainer');
+  const btnGamma = document.getElementById('tabBtnGamma');
+  const btnInteractive = document.getElementById('tabBtnInteractive');
+
+  if (tab === 'gamma') {
+    if (gammaView) gammaView.style.display = 'block';
+    if (interactiveView) interactiveView.style.display = 'none';
+    if (btnGamma) {
+      btnGamma.style.background = '#0056d2';
+      btnGamma.style.borderColor = '#0056d2';
+      btnGamma.style.color = '#fff';
+    }
+    if (btnInteractive) {
+      btnInteractive.style.background = '#f8fafc';
+      btnInteractive.style.borderColor = '#e2e8f0';
+      btnInteractive.style.color = '#475569';
+    }
+  } else {
+    if (gammaView) gammaView.style.display = 'none';
+    if (interactiveView) interactiveView.style.display = 'block';
+    if (btnGamma) {
+      btnGamma.style.background = '#f8fafc';
+      btnGamma.style.borderColor = '#e2e8f0';
+      btnGamma.style.color = '#475569';
+    }
+    if (btnInteractive) {
+      btnInteractive.style.background = '#0056d2';
+      btnInteractive.style.borderColor = '#0056d2';
+      btnInteractive.style.color = '#fff';
+    }
+    if (typeof window.cl01GoToSlide === 'function') {
+      window.cl01GoToSlide(0);
+    }
+  }
+  if (typeof initLucide === 'function') initLucide();
 }
 
 // ================= INLINE KNOWLEDGE CHECKS (1.1 - 1.6) =================
@@ -583,13 +703,9 @@ function retake15QuestionQuiz() {
 document.addEventListener('DOMContentLoaded', () => {
   loadCL01Progress();
   initVideoPlayerState();
+  initGammaSlideState();
   loadWorksheetDraft();
   loadSavedQuiz();
-
-  const hash = window.location.hash.replace('#', '');
-  if (hash && document.getElementById(hash)) {
-    showPage(hash);
-  }
 });
 
 </script>
@@ -4629,22 +4745,22 @@ h1{
     <span>/</span>
     <span>CL01: Introduction to Air Transportation</span>
     <span>/</span>
-    <span>Lecture Slides</span>
+    <span>Lecture Slides (Gamma)</span>
   </div>
 
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
     <div>
       <h1 style="margin:0 0 4px;">CL01 Lecture Slide Deck</h1>
-      <div class="subtitle" style="margin-bottom:0;">Introduction to Air Transportation · 14 Comprehensive University Presentation Slides</div>
+      <div class="subtitle" style="margin-bottom:0;">Introduction to Air Transportation · Presentation Slides on Gamma</div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
       <button class="btn alt" onclick="showPage('welcome')" style="padding:7px 14px;font-size:12.5px;">
         <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
         <span>CL01 Overview</span>
       </button>
-      <button class="btn alt" onclick="cl01ToggleThumbnailsModal()" style="padding:7px 14px;font-size:12.5px;">
-        <i data-lucide="grid" style="width:14px;height:14px;"></i>
-        <span>All 14 Slides</span>
+      <button class="btn alt" onclick="openGammaSettingsModal()" style="padding:7px 14px;font-size:12.5px;">
+        <i data-lucide="settings" style="width:14px;height:14px;color:#0056d2;"></i>
+        <span>Configure Gamma URL</span>
       </button>
       <button class="btn" onclick="cl01PrintHandouts()" style="padding:7px 14px;font-size:12.5px;">
         <i data-lucide="printer" style="width:14px;height:14px;"></i>
@@ -4653,164 +4769,230 @@ h1{
     </div>
   </div>
 
-  <!-- Main Slide Deck Player Container -->
-  <div id="cl01SlideDeckViewer" class="cl01-deck-wrapper">
-    <!-- Top Deck Header Bar -->
-    <div class="cl01-deck-header">
-      <div class="cl01-deck-title-area">
-        <div class="cl01-deck-topic-tag" id="cl01SlideTopicBadge">COURSE OVERVIEW · ITC</div>
-        <div style="font-size:13px;font-weight:700;color:#94a3b8;" id="cl01SlideCounterText">Slide 1 of 14</div>
-      </div>
+  <!-- View Switcher Tabs: Gamma Presentation vs Interactive Deck -->
+  <div class="glossary-filter-bar" style="margin:4px 0 16px;">
+    <button id="tabBtnGamma" class="glossary-pill active" onclick="switchCL01SlideTab('gamma')">
+      <i data-lucide="presentation" style="width:14px;height:14px;"></i>
+      <span>Gamma Presentation (Default)</span>
+    </button>
+    <button id="tabBtnInteractive" class="glossary-pill" onclick="switchCL01SlideTab('interactive')">
+      <i data-lucide="layers" style="width:14px;height:14px;"></i>
+      <span>Interactive 14-Slide Deck & Notes</span>
+    </button>
+  </div>
 
-      <div class="cl01-deck-controls-top">
-        <button class="cl01-deck-btn" onclick="cl01ToggleNotes()" id="cl01ToggleNotesBtn" title="Toggle Instructor Talking Points (Shortcut: N)">
-          <i data-lucide="message-square" style="width:14px;height:14px;"></i>
-          <span>Speaker Notes</span>
+  <!-- 1. PRIMARY VIEW: GAMMA SLIDE PRESENTATION (Default) -->
+  <div id="cl01GammaSlideView" class="card" style="padding:0;overflow:hidden;margin-bottom:24px;">
+    <div style="background:#0f172a;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1e293b;flex-wrap:wrap;gap:10px;">
+      <div style="display:flex;align-items:center;gap:10px;color:#ffffff;">
+        <span class="cl01-deck-topic-tag">GAMMA.APP EMBED</span>
+        <span style="font-weight:750;font-size:14.5px;">CL01 Master Lecture Slides: Introduction to Air Transportation</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="cl01-deck-btn" onclick="openGammaSettingsModal()" title="Change or customize the Gamma presentation link">
+          <i data-lucide="settings" style="width:13px;height:13px;"></i>
+          <span>Configure URL</span>
         </button>
-        <button class="cl01-deck-btn" onclick="cl01ToggleThumbnailsModal()" title="View Grid of All Slides (Shortcut: G)">
-          <i data-lucide="layout-grid" style="width:14px;height:14px;"></i>
-          <span>Slide Grid</span>
-        </button>
-        <button class="cl01-deck-btn" onclick="cl01ToggleAutoplay()" id="cl01AutoplayBtn" title="Autoplay Slideshow (8s/slide)">
-          <i data-lucide="play" style="width:14px;height:14px;" id="cl01AutoplayIcon"></i>
-          <span>Slideshow</span>
-        </button>
-        <button class="cl01-deck-btn" onclick="cl01ToggleFullscreen()" title="Fullscreen Presentation Mode (Shortcut: F)">
-          <i data-lucide="maximize-2" style="width:14px;height:14px;"></i>
+        <button class="cl01-deck-btn" onclick="openGammaFullscreen()" title="View Gamma presentation in Fullscreen">
+          <i data-lucide="maximize-2" style="width:13px;height:13px;"></i>
           <span>Fullscreen</span>
         </button>
       </div>
     </div>
 
-    <!-- Progress Fill Bar -->
-    <div class="cl01-deck-progress-track">
-      <div id="cl01SlideProgressBar" class="cl01-deck-progress-fill"></div>
+    <!-- Responsive 16:9 Aspect Ratio Gamma Embed Frame -->
+    <div class="media-standard-16-9" id="cl01GammaContainer" style="border-radius:0;">
+      <iframe
+        id="cl01GammaFrame"
+        src="https://gamma.app/embed/hug9dm6s6f7e25k"
+        title="CL01: Introduction to Air Transportation Slides"
+        allow="fullscreen"
+        allowfullscreen>
+      </iframe>
     </div>
 
-    <!-- Slide Viewport (Aspect Ratio & Inner Canvas) -->
-    <div class="cl01-slide-viewport">
-      <!-- Slide Banner Info -->
-      <div class="cl01-slide-inner-banner">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-          <div>
-            <h2 id="cl01SlideTitle" style="margin:0 0 4px;font-size:22px;font-weight:800;color:#0f172a;letter-spacing:-0.015em;">
-              Introduction to Air Transportation
-            </h2>
-            <div id="cl01SlideSubtitle" style="font-size:13px;color:#64748b;line-height:1.45;">
-              Foundations of Civil Aviation Systems, Operational Economics, Infrastructure & Global Regulatory Architecture
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:11px;font-weight:750;background:#f1f5f9;color:#475569;padding:3px 8px;border-radius:6px;border:1px solid #e2e8f0;">
-              ITC · TE-401
-            </span>
-          </div>
+    <!-- Gamma Player Footer Controls & Details -->
+    <div style="padding:16px 22px;background:#ffffff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <span style="font-size:11px;font-weight:800;background:#eff6ff;color:#0056d2;padding:2px 8px;border-radius:4px;">GAMMA SLIDES</span>
+          <span id="gammaCurrentUrlLabel" style="font-size:12.5px;color:#64748b;font-weight:600;">Source: Gamma App</span>
         </div>
+        <p style="margin:0;font-size:13px;color:#475569;">
+          Click the presentation to navigate forward or backward, or enter fullscreen. You can also customize the embed link anytime.
+        </p>
       </div>
 
-      <!-- Slide Active Dynamic Body -->
-      <div class="cl01-slide-inner-body" id="cl01ActiveSlideCanvas">
-        <div style="display:flex;flex-direction:column;gap:18px;height:100%;justify-content:center;">
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
-            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #0056d2;border-radius:12px;padding:20px;">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                <span style="font-size:11px;font-weight:800;background:#eff6ff;color:#0056d2;padding:3px 8px;border-radius:4px;">ACADEMIC CONTEXT</span>
-              </div>
-              <h4 style="margin:0 0 6px;font-size:16px;color:#0f172a;font-weight:800;">Department of Transportation Engineering</h4>
-              <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">
-                Institute of Technology of Cambodia (ITC) · Civil Engineering Faculty<br>
-                <b>Course:</b> Air Transport Planning and Management (CL01–CL08 Series)<br>
-                <b>Target Audience:</b> Year 4 Transportation Engineering Undergraduates
-              </p>
-            </div>
-
-            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #10b981;border-radius:12px;padding:20px;">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                <span style="font-size:11px;font-weight:800;background:#ecfdf5;color:#059669;padding:3px 8px;border-radius:4px;">CURRICULUM ARCHITECTURE</span>
-              </div>
-              <h4 style="margin:0 0 6px;font-size:16px;color:#0f172a;font-weight:800;">6 Core Instructional Pillars</h4>
-              <ul style="margin:0;padding-left:18px;font-size:12.5px;color:#475569;line-height:1.65;">
-                <li><b>1.1</b> Fundamentals, Physics of Speed & Modal Economics</li>
-                <li><b>1.2</b> Aviation History, Technology & US Deregulation (1978)</li>
-                <li><b>1.3</b> 4 System Components & Aerodrome Zoning (Airside/Landside)</li>
-                <li><b>1.4</b> Industry Classification: Commercial, Cargo & General Aviation</li>
-                <li><b>1.5</b> ICAO SARPs, IATA Clearinghouse & The 9 Freedoms of the Air</li>
-                <li><b>1.6</b> Cambodia Aviation Master Plan: Techo KTI 4F & Siem Reap SAI</li>
-              </ul>
-            </div>
-          </div>
-
-          <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-            <div style="font-size:13px;color:#1e3a8a;line-height:1.5;">
-              <b>Core Learning Purpose:</b> Master the engineering, regulatory, and spatial principles governing modern civil aviation before studying econometric forecasting (CL02) and runway airfield design (CL03).
-            </div>
-            <span style="font-size:12px;font-weight:800;background:#0056d2;color:#ffffff;padding:5px 12px;border-radius:6px;">
-              14 High-Impact Slides
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Collapsible Speaker Notes Drawer -->
-      <div id="cl01SpeakerNotesPanel" class="cl01-notes-drawer">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#0056d2;text-transform:uppercase;">
-            <i data-lucide="graduation-cap" style="width:15px;height:15px;"></i>
-            <span>Instructor Lecture Notes & Discussion Points</span>
-          </div>
-          <span style="font-size:11px;color:#64748b;">Shortcut: Press N to toggle</span>
-        </div>
-        <div id="cl01NotesContent">
-          <div style="font-size:13px;line-height:1.6;color:#334155;">
-            <b style="color:#0056d2;display:block;margin-bottom:4px;">Pedagogical Context & Talking Points:</b>
-            Welcome students to Module CL01. Introduce air transportation not merely as aircraft flight, but as an interconnected global socio-technical system. Emphasize that civil engineers design the runways, taxiways, passenger terminals, and drainage systems that make modern aviation possible.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom Controls & Navigation Footer -->
-    <div class="cl01-deck-footer-bar">
       <div style="display:flex;align-items:center;gap:10px;">
-        <button id="cl01SlidePrevBtn" class="btn alt" onclick="cl01PrevSlide()" style="padding:8px 14px;font-size:13px;" disabled>
-          <i data-lucide="chevron-left" style="width:16px;height:16px;"></i>
-          <span>Previous</span>
+        <button class="btn alt" onclick="switchCL01SlideTab('interactive')" style="padding:8px 14px;font-size:13px;">
+          <i data-lucide="book-open" style="width:15px;height:15px;"></i>
+          <span>Interactive Deck (14)</span>
         </button>
+        <button class="btn" onclick="completeAndOpen('cl01slides', 'simulation')">
+          <span>Next: Interactive Simulation</span>
+          <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 
-        <button id="cl01SlideNextBtn" class="btn" onclick="cl01NextSlide()" style="padding:8px 16px;font-size:13px;">
-          <span>Next Slide</span>
-          <i data-lucide="chevron-right" style="width:16px;height:16px;"></i>
+  <!-- 2. SECONDARY VIEW: INTERACTIVE 14-SLIDE DECK & NOTES -->
+  <div id="cl01InteractiveDeckContainer" style="display:none;">
+    <!-- Main Slide Deck Player Container -->
+    <div id="cl01SlideDeckViewer" class="cl01-deck-wrapper">
+      <!-- Top Deck Header Bar -->
+      <div class="cl01-deck-header">
+        <div class="cl01-deck-title-area">
+          <div class="cl01-deck-topic-tag" id="cl01SlideTopicBadge">COURSE OVERVIEW · ITC</div>
+          <div style="font-size:13px;font-weight:700;color:#94a3b8;" id="cl01SlideCounterText">Slide 1 of 14</div>
+        </div>
+
+        <div class="cl01-deck-controls-top">
+          <button class="cl01-deck-btn" onclick="cl01ToggleNotes()" id="cl01ToggleNotesBtn" title="Toggle Instructor Talking Points (Shortcut: N)">
+            <i data-lucide="message-square" style="width:14px;height:14px;"></i>
+            <span>Speaker Notes</span>
+          </button>
+          <button class="cl01-deck-btn" onclick="cl01ToggleThumbnailsModal()" title="View Grid of All Slides (Shortcut: G)">
+            <i data-lucide="layout-grid" style="width:14px;height:14px;"></i>
+            <span>Slide Grid</span>
+          </button>
+          <button class="cl01-deck-btn" onclick="cl01ToggleAutoplay()" id="cl01AutoplayBtn" title="Autoplay Slideshow (8s/slide)">
+            <i data-lucide="play" style="width:14px;height:14px;" id="cl01AutoplayIcon"></i>
+            <span>Slideshow</span>
+          </button>
+          <button class="cl01-deck-btn" onclick="cl01ToggleFullscreen()" title="Fullscreen Presentation Mode (Shortcut: F)">
+            <i data-lucide="maximize-2" style="width:14px;height:14px;"></i>
+            <span>Fullscreen</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress Fill Bar -->
+      <div class="cl01-deck-progress-track">
+        <div id="cl01SlideProgressBar" class="cl01-deck-progress-fill"></div>
+      </div>
+
+      <!-- Slide Viewport (Aspect Ratio & Inner Canvas) -->
+      <div class="cl01-slide-viewport">
+        <!-- Slide Banner Info -->
+        <div class="cl01-slide-inner-banner">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div>
+              <h2 id="cl01SlideTitle" style="margin:0 0 4px;font-size:22px;font-weight:800;color:#0f172a;letter-spacing:-0.015em;">
+                Introduction to Air Transportation
+              </h2>
+              <div id="cl01SlideSubtitle" style="font-size:13px;color:#64748b;line-height:1.45;">
+                Foundations of Civil Aviation Systems, Operational Economics, Infrastructure & Global Regulatory Architecture
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:11px;font-weight:750;background:#f1f5f9;color:#475569;padding:3px 8px;border-radius:6px;border:1px solid #e2e8f0;">
+                ITC · TE-401
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide Active Dynamic Body -->
+        <div class="cl01-slide-inner-body" id="cl01ActiveSlideCanvas">
+          <!-- Rendered dynamically by renderCL01Slide(index) in cl01Slides.ts -->
+        </div>
+
+        <!-- Collapsible Speaker Notes Drawer -->
+        <div id="cl01SpeakerNotesPanel" class="cl01-notes-drawer">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#0056d2;text-transform:uppercase;">
+              <i data-lucide="graduation-cap" style="width:15px;height:15px;"></i>
+              <span>Instructor Lecture Notes & Discussion Points</span>
+            </div>
+            <span style="font-size:11px;color:#64748b;">Shortcut: Press N to toggle</span>
+          </div>
+          <div id="cl01NotesContent"></div>
+        </div>
+      </div>
+
+      <!-- Bottom Controls & Navigation Footer -->
+      <div class="cl01-deck-footer-bar">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button id="cl01SlidePrevBtn" class="btn alt" onclick="cl01PrevSlide()" style="padding:8px 14px;font-size:13px;" disabled>
+            <i data-lucide="chevron-left" style="width:16px;height:16px;"></i>
+            <span>Previous</span>
+          </button>
+
+          <button id="cl01SlideNextBtn" class="btn" onclick="cl01NextSlide()" style="padding:8px 16px;font-size:13px;">
+            <span>Next Slide</span>
+            <i data-lucide="chevron-right" style="width:16px;height:16px;"></i>
+          </button>
+        </div>
+
+        <!-- Slide Jump Dropdown -->
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:12px;color:#64748b;font-weight:600;">Jump:</span>
+          <select id="cl01SlideSelect" onchange="cl01GoToSlide(Number(this.value))" style="padding:7px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;font-family:inherit;background:#fff;outline:none;font-weight:600;color:#1e293b;cursor:pointer;">
+            <option value="0">Slide 1: Course Overview & Scope</option>
+            <option value="1">Slide 2: Global Macroeconomic Footprint</option>
+            <option value="2">Slide 3: 1.1 Fundamentals & HSR Curve</option>
+            <option value="3">Slide 4: Operational Math (ASK / RPK / PLF)</option>
+            <option value="4">Slide 5: 1.2 History & Technological Evolution</option>
+            <option value="5">Slide 6: 1.3 The 4 System Pillars</option>
+            <option value="6">Slide 7: Aerodrome Airside vs. Landside</option>
+            <option value="7">Slide 8: 1.4 Aviation Industry Classification</option>
+            <option value="8">Slide 9: Business Models: FSC vs. LCC</option>
+            <option value="9">Slide 10: 1.5 Governance: ICAO, IATA, SSCA</option>
+            <option value="10">Slide 11: The 9 Freedoms of the Air</option>
+            <option value="11">Slide 12: 1.6 Cambodia Aviation & Techo KTI</option>
+            <option value="12">Slide 13: ICAO Aerodrome Reference Codes</option>
+            <option value="13">Slide 14: CL01 Synthesis & Bridge to CL02</option>
+          </select>
+        </div>
+
+        <!-- Shortcuts Guidance -->
+        <div style="font-size:11.5px;color:#94a3b8;display:flex;align-items:center;gap:12px;">
+          <span>Keyboard: <b>←</b> / <b>→</b> or <b>Space</b></span>
+          <span>•</span>
+          <span><b>F</b>: Fullscreen</span>
+          <span>•</span>
+          <span><b>N</b>: Notes</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Configurable Gamma URL Modal Dialog -->
+  <div id="gammaModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(15,23,42,0.65);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:#ffffff;border-radius:14px;padding:26px;max-width:540px;width:92%;box-shadow:0 12px 48px rgba(0,0,0,0.25);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:8px;background:#eff6ff;color:#0056d2;display:flex;align-items:center;justify-content:center;">
+            <i data-lucide="presentation" style="width:18px;height:18px;"></i>
+          </div>
+          <div>
+            <h3 style="margin:0;font-size:17px;font-weight:800;color:#0f172a;">Configure Gamma Slide URL</h3>
+            <div style="font-size:12px;color:#64748b;">CL01: Introduction to Air Transportation</div>
+          </div>
+        </div>
+        <button onclick="closeGammaSettingsModal()" style="border:none;background:none;cursor:pointer;color:#64748b;padding:4px;">
+          <i data-lucide="x" style="width:18px;height:18px;"></i>
         </button>
       </div>
 
-      <!-- Slide Jump Dropdown -->
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:12px;color:#64748b;font-weight:600;">Jump:</span>
-        <select id="cl01SlideSelect" onchange="cl01GoToSlide(Number(this.value))" style="padding:7px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;font-family:inherit;background:#fff;outline:none;font-weight:600;color:#1e293b;cursor:pointer;">
-          <option value="0">Slide 1: Course Overview & Scope</option>
-          <option value="1">Slide 2: Global Macroeconomic Footprint</option>
-          <option value="2">Slide 3: 1.1 Fundamentals & HSR Curve</option>
-          <option value="3">Slide 4: Operational Math (ASK / RPK / PLF)</option>
-          <option value="4">Slide 5: 1.2 History & Technological Evolution</option>
-          <option value="5">Slide 6: 1.3 The 4 System Pillars</option>
-          <option value="6">Slide 7: Aerodrome Airside vs. Landside</option>
-          <option value="7">Slide 8: 1.4 Aviation Industry Classification</option>
-          <option value="8">Slide 9: Business Models: FSC vs. LCC</option>
-          <option value="9">Slide 10: 1.5 Governance: ICAO, IATA, SSCA</option>
-          <option value="10">Slide 11: The 9 Freedoms of the Air</option>
-          <option value="11">Slide 12: 1.6 Cambodia Aviation & Techo KTI</option>
-          <option value="12">Slide 13: ICAO Aerodrome Reference Codes</option>
-          <option value="13">Slide 14: CL01 Synthesis & Bridge to CL02</option>
-        </select>
+      <p style="font-size:13px;color:#475569;margin:0 0 14px;line-height:1.55;">
+        Paste your verified Gamma presentation link below. Both standard Gamma links (<code>https://gamma.app/docs/...</code>) and embed links (<code>https://gamma.app/embed/...</code>) are automatically parsed and supported.
+      </p>
+
+      <label style="font-size:12px;font-weight:800;color:#334155;display:block;margin-bottom:6px;">Gamma Presentation or Embed URL:</label>
+      <input type="text" id="customGammaInput" value="https://gamma.app/embed/hug9dm6s6f7e25k" style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;font-family:inherit;margin-bottom:8px;outline:none;" placeholder="https://gamma.app/embed/..." />
+
+      <div style="font-size:11.5px;color:#64748b;margin-bottom:18px;background:#f8fafc;padding:8px 12px;border-radius:6px;border:1px solid #e2e8f0;">
+        💡 <b>Pro tip:</b> Changes are saved to your browser's local storage and persist across sessions.
       </div>
 
-      <!-- Shortcuts Guidance -->
-      <div style="font-size:11.5px;color:#94a3b8;display:flex;align-items:center;gap:12px;">
-        <span>Keyboard: <b>←</b> / <b>→</b> or <b>Space</b></span>
-        <span>•</span>
-        <span><b>F</b>: Fullscreen</span>
-        <span>•</span>
-        <span><b>N</b>: Notes</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+        <button class="btn alt" onclick="resetDefaultGammaUrl()" style="font-size:12px;padding:8px 12px;">Reset Default</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn alt" onclick="closeGammaSettingsModal()">Cancel</button>
+          <button class="btn" onclick="saveCustomGammaUrl()">Apply Gamma Slide</button>
+        </div>
       </div>
     </div>
   </div>
@@ -6126,7 +6308,6 @@ function openPage(id){
 }
 
 function completeAndOpen(current, next){
-  if(typeof markCL01SectionCompleted === 'function') markCL01SectionCompleted(current);
   if(current === 'welcome') completedModules.add('cl01');
   updateCourseProgress();
   openPage(next);
