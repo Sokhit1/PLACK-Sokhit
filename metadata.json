@@ -1,0 +1,6 @@
+{
+  "name": "Air Transport Systems - CL01 | ITC Learning Hub",
+  "description": "Interactive learning hub for Air Transport Planning and Management course modules, lectures, activities, and quizzes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
