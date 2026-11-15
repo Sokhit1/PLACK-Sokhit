@@ -2,12 +2,38 @@
 
 Lecture materials by **Dr. PLACK Sokhit** for undergraduate and master's students in Transport Engineering.
 
-| Module | Course Learning Outcome | Slides | Exercise and quiz |
+| Module | Topic | Slides | Exercise and quiz |
 |---|---|---|---|
-| 4 · Airport Capacity and Level of Service | CLO4 | [Open slides](https://claude.ai/artifact/4k8rweTWuPfpJbqrYxJye6) | [module-4-exercise-and-quiz.md](module-4-exercise-and-quiz.md) |
-| 5 · Airline Planning and Management | CLO5 | [Open slides](https://claude.ai/artifact/3MKUcfkkLDE6QqxQiNR5wf) | [module-5-exercise-and-quiz.md](module-5-exercise-and-quiz.md) |
+| 1 | Introduction to Air Transport Systems | [Open slides (Gamma)](https://gamma.app/docs/Introduction-to-Air-Transport-Systems-5hqaokcp6bgauqz) | In the slides |
+| 2 | Air Transport Demand and Forecasting | [Open slides (Gamma)](https://gamma.app/docs/Air-Transport-Demand-and-Forecasting-hug9dm6s6f7e25k) | In the slides |
+| 3 | Airport Planning and Master Planning | [Open slides (Gamma)](https://gamma.app/docs/Airport-Planning-and-Master-Planning-p23ltp5dw8zbmdf) | In the slides |
+| 4 | Airport Capacity and Level of Service (CLO4) | [Open slides](https://claude.ai/artifact/4k8rweTWuPfpJbqrYxJye6) | [module-4-exercise-and-quiz.md](module-4-exercise-and-quiz.md) |
+| 5 | Airline Planning and Management (CLO5) | [Open slides](https://claude.ai/artifact/3MKUcfkkLDE6QqxQiNR5wf) | [module-5-exercise-and-quiz.md](module-5-exercise-and-quiz.md) |
 
-> The slide links open only for people the decks have been shared with. Share each deck from its **Share** button before giving these links to students.
+> Slide links open only for people the decks are shared with. Before giving these links to students, share each Module 4–5 deck from its **Share** button, and set each Gamma deck to "Anyone with the link can view" in Gamma's **Share** menu.
+
+---
+
+## Modules 1–3 (Gamma decks)
+
+**Module 1 · Introduction to Air Transport Systems** — foundation module for the course.
+
+**Module 2 · Air Transport Demand and Forecasting**
+
+- Types and drivers of demand: passengers, cargo, aircraft movements; domestic vs international; business vs leisure
+- Historical analysis: annual growth rate and CAGR
+- Forecasting: growth-rate model `Pₜ = P₀(1 + g)ᵗ`, trend extrapolation, regression, econometric and scenario methods
+- Applications: demand vs capacity, peak-hour demand, aircraft movements, air cargo
+- Cambodia case study, class exercise, review questions
+
+**Module 3 · Airport Planning and Master Planning**
+
+- Purpose and objectives of airport planning; airport types and classifications
+- The master planning process: existing conditions, demand forecasting, capacity assessment, facility requirements
+- Development and evaluation of alternatives; site selection and weighted site-selection matrix; land-use planning
+- Airside, terminal and landside planning; cargo, maintenance and support facilities
+- Environment, safety and security; phased development
+- Cambodia discussion, site-selection group activity, review quiz
 
 ---
 
