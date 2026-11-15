@@ -9,8 +9,9 @@ Lecture materials by **Dr. PLACK Sokhit** for undergraduate and master's student
 | 3 | Airport Planning and Master Planning | [Open slides (Gamma)](https://gamma.app/docs/Airport-Planning-and-Master-Planning-p23ltp5dw8zbmdf) | In the slides |
 | 4 | Airport Capacity and Level of Service (CLO4) | [Open slides](https://claude.ai/artifact/4k8rweTWuPfpJbqrYxJye6) | [module-4-exercise-and-quiz.md](module-4-exercise-and-quiz.md) |
 | 5 | Airline Planning and Management (CLO5) | [Open slides](https://claude.ai/artifact/3MKUcfkkLDE6QqxQiNR5wf) | [module-5-exercise-and-quiz.md](module-5-exercise-and-quiz.md) |
+| 6 | Airline Operations and Financial Performance (CLO6) | [Open slides](https://claude.ai/artifact/KfVZZveMMFTiSeZ1DmhK79) | [module-6-exercise-and-quiz.md](module-6-exercise-and-quiz.md) |
 
-> Slide links open only for people the decks are shared with. Before giving these links to students, share each Module 4–5 deck from its **Share** button, and set each Gamma deck to "Anyone with the link can view" in Gamma's **Share** menu.
+> Slide links open only for people the decks are shared with. Before giving these links to students, share each Module 4–6 deck from its **Share** button, and set each Gamma deck to "Anyone with the link can view" in Gamma's **Share** menu.
 
 ---
 
@@ -110,6 +111,43 @@ Lecture materials by **Dr. PLACK Sokhit** for undergraduate and master's student
 - Aircraft needed: `daily block hours required ÷ utilization per aircraft + spares`
 
 > Airline Profit = ASK × (Load factor × Yield − CASK)
+
+---
+
+## Module 6 · Airline Operations and Financial Performance
+
+**CLO6:** Evaluate flight schedules, aircraft utilization, operating costs, revenue performance, and route profitability, and recommend strategies to improve airline operational and financial performance.
+
+**Learning objectives.** Students should be able to:
+
+1. Explain the objectives and constraints of scheduling.
+2. Evaluate schedules with block time and punctuality.
+3. Calculate aircraft utilization and its cost effect.
+4. Classify operating costs and build a trip cost.
+5. Measure revenue with yield, RASK and ancillaries.
+6. Analyze route profitability and break-even load.
+7. Recommend operational and financial strategies.
+
+**Outline (30 slides)**
+
+- From flight schedule to profit; recap of key measures
+- Flight schedules: objectives and constraints, schedule patterns, block time and buffers, schedule indicators
+- Aircraft utilization: definition and typical ranges, effect on unit cost, the turnaround critical path, limits
+- Operating costs: classification by driver, building a trip cost, CASK and stage length, fuel price sensitivity
+- Revenue: sources, measures (yield, PRASK, RASK, ancillary), load factor versus revenue per seat
+- Route profitability: contribution ladder, break-even analysis, route decision grid
+- Performance dashboard; operational and financial improvement strategies
+- Classroom exercise, review quiz, summary, thank you
+
+**Key formulas**
+
+- Utilization: `block hours ÷ (aircraft × days)`
+- Trip cost: `Σ (cost driver × rate)` per block hour, per flight and per passenger
+- PRASK: `load factor × yield`
+- Break-even passengers: `trip cost ÷ revenue per passenger`
+- Operating margin: `(revenue − cost) ÷ revenue`
+
+> Operating Margin = (RASK − CASK) ÷ RASK
 
 ---
 
