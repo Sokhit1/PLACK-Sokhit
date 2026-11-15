@@ -10,8 +10,9 @@ Lecture materials by **Dr. PLACK Sokhit** for undergraduate and master's student
 | 4 | Airport Capacity and Level of Service (CLO4) | [Open slides](https://claude.ai/artifact/4k8rweTWuPfpJbqrYxJye6) | [module-4-exercise-and-quiz.md](module-4-exercise-and-quiz.md) |
 | 5 | Airline Planning and Management (CLO5) | [Open slides](https://claude.ai/artifact/3MKUcfkkLDE6QqxQiNR5wf) | [module-5-exercise-and-quiz.md](module-5-exercise-and-quiz.md) |
 | 6 | Airline Operations and Financial Performance (CLO6) | [Open slides](https://claude.ai/artifact/KfVZZveMMFTiSeZ1DmhK79) | [module-6-exercise-and-quiz.md](module-6-exercise-and-quiz.md) |
+| 7 | Airport Management, Safety and Security (CLO7) | [Open slides](https://claude.ai/artifact/7WRzdfFAK5pvmU3C1dCipD) | [module-7-exercise-and-quiz.md](module-7-exercise-and-quiz.md) |
 
-> Slide links open only for people the decks are shared with. Before giving these links to students, share each Module 4–6 deck from its **Share** button, and set each Gamma deck to "Anyone with the link can view" in Gamma's **Share** menu.
+> Slide links open only for people the decks are shared with. Before giving these links to students, share each Module 4–7 deck from its **Share** button, and set each Gamma deck to "Anyone with the link can view" in Gamma's **Share** menu.
 
 ---
 
@@ -148,6 +149,39 @@ Lecture materials by **Dr. PLACK Sokhit** for undergraduate and master's student
 - Operating margin: `(revenue − cost) ÷ revenue`
 
 > Operating Margin = (RASK − CASK) ÷ RASK
+
+---
+
+## Module 7 · Airport Management, Safety and Security
+
+**CLO7:** Assess airport management functions, identify operational safety hazards and security risks, and develop suitable mitigation strategies to support safe, secure, and efficient airport operations.
+
+**Learning objectives.** Students should be able to:
+
+1. Describe airport governance and management functions.
+2. Explain the role of the airport operations centre.
+3. Distinguish aviation safety from aviation security.
+4. Identify airside safety hazards and security threats.
+5. Assess risk with a likelihood–severity matrix.
+6. Apply SMS and layered-security principles.
+7. Develop practical mitigation strategies.
+
+**Outline (28 slides)**
+
+- Three goals of airport management; ownership and governance models; management functions; the airport operations centre
+- Safety versus security; the ICAO framework (Annex 14, 17, 19)
+- Airside hazards; the 5 × 5 risk matrix; the four pillars of an SMS; hazard-to-mitigation process and hierarchy of controls
+- Runway safety, wildlife and FOD, apron safety, emergency planning
+- Security threats, layered security, access control and zones, screening, security risk assessment, emerging threats
+- Balancing safety, security and efficiency
+- Classroom exercise, review quiz, summary, thank you
+
+**Key formulas**
+
+- Safety risk score: `likelihood × severity` (1–4 low, 5–9 medium, 10–25 high)
+- Security risk: `threat × vulnerability × consequence`
+
+> Safety Risk = Likelihood × Severity → mitigate until acceptable
 
 ---
 
