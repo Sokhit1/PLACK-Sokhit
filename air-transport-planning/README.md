@@ -11,8 +11,9 @@ Lecture materials by **Dr. PLACK Sokhit** for undergraduate and master's student
 | 5 | Airline Planning and Management (CLO5) | [Open slides](https://claude.ai/artifact/3MKUcfkkLDE6QqxQiNR5wf) | [module-5-exercise-and-quiz.md](module-5-exercise-and-quiz.md) |
 | 6 | Airline Operations and Financial Performance (CLO6) | [Open slides](https://claude.ai/artifact/KfVZZveMMFTiSeZ1DmhK79) | [module-6-exercise-and-quiz.md](module-6-exercise-and-quiz.md) |
 | 7 | Airport Management, Safety and Security (CLO7) | [Open slides](https://claude.ai/artifact/7WRzdfFAK5pvmU3C1dCipD) | [module-7-exercise-and-quiz.md](module-7-exercise-and-quiz.md) |
+| 8 | Sustainable Aviation and Future Air Transport (CLO8) | [Open slides](https://claude.ai/artifact/MysWAeh1ZAUrw7cGG2JEqf) | [module-8-exercise-and-quiz.md](module-8-exercise-and-quiz.md) |
 
-> Slide links open only for people the decks are shared with. Before giving these links to students, share each Module 4–7 deck from its **Share** button, and set each Gamma deck to "Anyone with the link can view" in Gamma's **Share** menu.
+> Slide links open only for people the decks are shared with. Before giving these links to students, share each Module 4–8 deck from its **Share** button, and set each Gamma deck to "Anyone with the link can view" in Gamma's **Share** menu.
 
 ---
 
@@ -182,6 +183,41 @@ Lecture materials by **Dr. PLACK Sokhit** for undergraduate and master's student
 - Security risk: `threat × vulnerability × consequence`
 
 > Safety Risk = Likelihood × Severity → mitigate until acceptable
+
+---
+
+## Module 8 · Sustainable Aviation and Future Air Transport
+
+**CLO8:** Assess aviation-related environmental impacts, analyze sustainable airport and airline practices, and evaluate emerging technologies to propose strategies for reducing emissions, improving resource efficiency, and supporting future air transport development.
+
+**Learning objectives.** Students should be able to:
+
+1. Identify the environmental impacts of aviation.
+2. Calculate CO₂ emissions from fuel burn.
+3. Analyze sustainable airport practices.
+4. Analyze sustainable airline practices.
+5. Evaluate SAF and emerging technologies.
+6. Explain global policy and the path to net zero.
+7. Propose emission and resource strategies.
+
+**Outline (25 slides)**
+
+- Three pillars of sustainability; environmental impacts (global and local); aviation and climate change
+- CO₂ from fuel burn (worked example); noise and ICAO's balanced approach; local air quality, water and waste
+- Airport carbon footprint (Scopes 1–3, Airport Carbon Accreditation); sustainable airport practices; sustainable airline practices
+- Sustainable aviation fuel; more efficient aircraft; electric, hybrid, hydrogen, eVTOL and digital technologies; technology timeline
+- ICAO LTAG and CORSIA, IATA net zero 2050, ReFuelEU Aviation; IATA net-zero pathway
+- Resource-efficiency indicators; planning the future airport; trade-offs
+- Classroom exercise, review quiz, summary, thank you
+
+**Key formulas**
+
+- CO₂ from fuel: `CO₂ (kg) = fuel burned (kg) × 3.16`
+- SAF blend saving: `blend share × lifecycle saving`
+- Combined saving: `1 − (1 − s1) × (1 − s2) × (1 − s3)`
+- Intensity: `kWh ÷ passengers`, `litres ÷ passengers`, `recycled ÷ total waste`
+
+> Aviation Emissions = Traffic × Fuel per trip × Carbon per kg fuel
 
 ---
 
